@@ -1,50 +1,47 @@
 import PySimpleGUI as sg
+import numpy as np  
 
 layout = [[sg.Button(' ', key = str(row) + ' ' + str(col), size=(5,5)) for col in range(3)] for row in range(3)]
 
 window = sg.Window('Window Title', layout)
 lastupdate =  'o'
 
+def check_rows_and_cols(row_or_columns):
+    for row_or_column in row_or_columns:
+        if all(row_or_column) and row_or_column[0]:
+            return True
 
-# def anyone_won():
-#     return True  /False
+def anyone_won(state_of_the_game):   
+    diagonal1 = [state_of_the_game[0][0], state_of_the_game[1][1], state_of_the_game[2][2]]
+    diagonal2 = [state_of_the_game[2][0], state_of_the_game[1][1], state_of_the_game[0][2]]
+    diagonals = [diagonal1, diagonal2]
 
-# state_of_the_game = [
-#     ['x', None, None],
-#     [None, 'o', None],
-#     [None, None, None]
-# ]
-# '0 0'.split(' ')
-# ['0', '0']
-# list(map(lambda x: int(x), ['0', '0']))
-# [0, 0]
+    if check_rows_and_cols(state_of_the_game) or check_rows_and_cols(np.transpose(state_of_the_game)) or check_rows_and_cols(diagonals): return True
+    return False   
+
+
+state_of_the_game = [
+    [None, None, None],
+    [None, None, None],
+    [None, None, None]
+]
 
 while True:
     event, values = window.read()
-    # See if user wants to quit or window was closed
     if event == sg.WINDOW_CLOSED or event == 'Exit':
         break
+    x = int(event[2])
+    y = int(event[0])    
 
-    #if window[0 0], window[1 1], window[2 2] 
-    state_of_the_game.append(event)
-    print(state_of_the_game)
-    # Output a message to the window
-    
     if lastupdate == 'o':
         window[event].update('x')
         lastupdate =  'x'
+        state_of_the_game[y][x] = 'x'
     else:
         window[event].update('o')
         lastupdate =  'o'
+        state_of_the_game[y][x] = 'o'
 
-    print(event)
-    print(values)
-# Finish up by removing from the screen
+    if anyone_won(state_of_the_game):
+        break
 window.close()
-
-# [
-#     [sg.Button(f'{0}, {0}'), sg.Button(f'{0}, {1}'), sg.Button(f'{0}, {2}'), sg.Button(f'{0}, {3}')],
-#     [sg.Button(f'{1}, {0}'), sg.Button(f'{1}, {1}'), sg.Button(f'{1}, {2}'), sg.Button(f'{1}, {3}')],
-#     [sg.Button(f'{2}, {0}'), sg.Button(f'{2}, {1}'), sg.Button(f'{2}, {2}'),
-# ]
-
